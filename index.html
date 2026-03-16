@@ -1,15 +1,42 @@
-index.html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Personal OS</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>Personal OS</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<h1>Personal OS</h1>
-<p>Nathan's Personal Operating System is live.</p>
+<div class="page-root">
+
+<header class="header">
+<h1 id="title">Personal OS</h1>
+<p id="subtitle"></p>
+</header>
+
+<main class="dashboard">
+
+<section class="card card-habits">
+<h2>Daily Habits</h2>
+<ul id="habit-list"></ul>
+</section>
+
+<section class="card card-progress">
+<h2>Daily Score</h2>
+<div class="progress-number">
+<span id="daily-percent">0%</span>
+</div>
+</section>
+
+<section class="card card-reflection">
+<h2>Reflection</h2>
+<textarea id="reflection"></textarea>
+</section>
+
+</main>
+
+</div>
 
 <script src="script.js"></script>
 
