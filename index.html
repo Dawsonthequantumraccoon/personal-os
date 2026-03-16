@@ -1,44 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Personal OS</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal OS</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
+  <div class="page-root">
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">PERSONAL OS</p>
+          <h1 id="dashboard-title">Personal OS</h1>
+          <p id="dashboard-subtitle" class="subtitle">Clarity. Momentum. Foundations.</p>
+        </div>
 
-<div class="page-root">
+        <button id="open-settings" class="ghost-button" type="button" aria-label="Open settings">
+          Customize
+        </button>
+      </section>
 
-<header class="header">
-<h1 id="title">Personal OS</h1>
-<p id="subtitle"></p>
-</header>
+      <section class="grid grid-top">
+        <article class="card card-habits">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Daily Habits</h2>
+              <p class="card-subtitle">Small wins, repeated.</p>
+            </div>
+            <div class="pill" id="completed-pill">0 completed</div>
+          </div>
 
-<main class="dashboard">
+          <div id="habit-list" class="habit-list" aria-live="polite"></div>
 
-<section class="card card-habits">
-<h2>Daily Habits</h2>
-<ul id="habit-list"></ul>
-</section>
+          <div class="card-footer-note">
+            These are your base habits. Small, calm, repeatable.
+          </div>
+        </article>
 
-<section class="card card-progress">
-<h2>Daily Score</h2>
-<div class="progress-number">
-<span id="daily-percent">0%</span>
-</div>
-</section>
+        <aside class="card card-progress" aria-label="Daily Score">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Daily Score</h2>
+              <p class="card-subtitle">A simple read on today.</p>
+            </div>
+          </div>
 
-<section class="card card-reflection">
-<h2>Reflection</h2>
-<textarea id="reflection"></textarea>
-</section>
+          <div class="progress-main">
+            <div class="progress-number-row">
+              <span id="daily-percent" class="progress-number">0%</span>
+              <span id="daily-label" class="progress-label">Cold Start</span>
+            </div>
 
-</main>
+            <div class="progress-bar-shell" aria-hidden="true">
+              <div class="progress-bar-track">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
+              </div>
+            </div>
 
-</div>
+            <div class="progress-stats">
+              <span id="completed-count">0 completed</span>
+              <span class="progress-dot">•</span>
+              <span id="remaining-count">0 remaining</span>
+              <span class="progress-dot">•</span>
+              <span id="total-count">0 total</span>
+            </div>
+          </div>
+        </aside>
+      </section>
 
-<script src="script.js"></script>
+      <section class="grid grid-bottom">
+        <article class="card card-reflection">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Reflection</h2>
+              <p class="card-subtitle">Capture the signal from the day.</p>
+            </div>
+          </div>
 
+          <label for="reflection-input" class="sr-only">Daily reflection</label>
+          <textarea
+            id="reflection-input"
+            class="reflection-input"
+            rows="6"
+            placeholder="What mattered today? What moved the needle?"
+          ></textarea>
+
+          <div class="reflection-footer">
+            <span id="reflection-status" class="muted-text">Saved locally on this device.</span>
+          </div>
+        </article>
+
+        <article class="card card-focus">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Today’s Focus</h2>
+              <p class="card-subtitle">The main thing, not all the things.</p>
+            </div>
+          </div>
+
+          <label for="focus-input" class="sr-only">Today's focus</label>
+          <input
+            id="focus-input"
+            class="focus-input"
+            type="text"
+            placeholder="What is the one thing that would make today a win?"
+          />
+
+          <div class="focus-footer">
+            <span class="muted-text">Keep it singular. Keep it clear.</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid grid-bottom">
+        <article class="card card-momentum">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Momentum</h2>
+              <p class="card-subtitle">Consistency compounds.</p>
+            </div>
+          </div>
+
+          <div class="momentum-stats">
+            <div class="stat-block">
+              <span class="stat-label">Current streak</span>
+              <span id="current-streak" class="stat-value">0</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-label">Best streak</span>
+              <span id="best-streak" class="stat-value">0</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-label">Days tracked</span>
+              <span id="days-tracked" class="stat-value">0</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card card-message">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">Signal</h2>
+              <p class="card-subtitle">A useful line for the day.</p>
+            </div>
+          </div>
+
+          <blockquote id="motivation-line" class="motivation-line">
+            Start with one win.
+          </blockquote>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div id="settings-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">SETTINGS</p>
+          <h2 id="settings-title">Personalize your OS</h2>
+        </div>
+        <button id="close-settings" class="icon-button" type="button" aria-label="Close settings">
+          ✕
+        </button>
+      </div>
+
+      <div class="settings-group">
+        <label for="title-input">Dashboard title</label>
+        <input id="title-input" type="text" placeholder="Nathan OS" />
+      </div>
+
+      <div class="settings-group">
+        <label for="subtitle-input">Subtitle</label>
+        <input id="subtitle-input" type="text" placeholder="Clarity. Momentum. Foundations." />
+      </div>
+
+      <div class="settings-group">
+        <label for="habits-input">Default habits (one per line)</label>
+        <textarea id="habits-input" rows="8" placeholder="Workout&#10;Read&#10;Meditate"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button id="reset-settings" class="ghost-button" type="button">Reset defaults</button>
+        <button id="save-settings" class="primary-button" type="button">Save changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
