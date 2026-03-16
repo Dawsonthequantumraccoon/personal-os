@@ -6,10 +6,6 @@ All data is saved in localStorage
 ====================================================
 */
 
-// ================================================
-// DEFAULT SETTINGS YOU CAN EDIT
-// ================================================
-
 const DEFAULT_TITLE = "Personal OS";
 const DEFAULT_SUBTITLE = "Clarity. Momentum. Foundations.";
 
@@ -46,10 +42,6 @@ const MOTIVATION_LINES = {
   ]
 };
 
-// ================================================
-// LOCAL STORAGE KEYS
-// ================================================
-
 const STORAGE_KEYS = {
   settings: "personalOS_settings",
   habitsState: "personalOS_habitsState",
@@ -59,20 +51,13 @@ const STORAGE_KEYS = {
   lastDate: "personalOS_lastDate"
 };
 
-// ================================================
-// HELPERS
-// ================================================
-
 function getTodayString() {
   return new Date().toISOString().slice(0, 10);
 }
 
 function loadFromStorage(key, fallback) {
   const raw = localStorage.getItem(key);
-
-  if (!raw) {
-    return fallback;
-  }
+  if (!raw) return fallback;
 
   try {
     return JSON.parse(raw);
@@ -85,17 +70,9 @@ function saveToStorage(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-function clampNumber(value, min, max) {
-  return Math.max(min, Math.min(max, value));
-}
-
 function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
-
-// ================================================
-// DEFAULT APP STATE
-// ================================================
 
 function getDefaultSettings() {
   return {
@@ -116,17 +93,11 @@ function getDefaultStats() {
 
 function createHabitsState(habits) {
   const state = {};
-
   habits.forEach((habit) => {
     state[habit] = false;
   });
-
   return state;
 }
-
-// ================================================
-// APP STATE
-// ================================================
 
 let settings = loadFromStorage(STORAGE_KEYS.settings, getDefaultSettings());
 let stats = loadFromStorage(STORAGE_KEYS.stats, getDefaultStats());
@@ -136,11 +107,7 @@ let habitsState = loadFromStorage(
 );
 let reflectionText = loadFromStorage(STORAGE_KEYS.reflection, "");
 let focusText = loadFromStorage(STORAGE_KEYS.focus, "");
-let today = getTodayString();
-
-// ================================================
-// DOM ELEMENTS
-// ================================================
+const today = getTodayString();
 
 const dashboardTitle = document.getElementById("dashboard-title");
 const dashboardSubtitle = document.getElementById("dashboard-subtitle");
@@ -167,7 +134,6 @@ const daysTracked = document.getElementById("days-tracked");
 
 const motivationLine = document.getElementById("motivation-line");
 
-// Settings modal
 const settingsModal = document.getElementById("settings-modal");
 const modalBackdrop = document.getElementById("modal-backdrop");
 const openSettingsButton = document.getElementById("open-settings");
@@ -179,10 +145,6 @@ const habitsInput = document.getElementById("habits-input");
 
 const saveSettingsButton = document.getElementById("save-settings");
 const resetSettingsButton = document.getElementById("reset-settings");
-
-// ================================================
-// DAILY RESET LOGIC
-// ================================================
 
 function runDailyResetIfNeeded() {
   const lastDate = localStorage.getItem(STORAGE_KEYS.lastDate);
@@ -196,22 +158,13 @@ function runDailyResetIfNeeded() {
     return;
   }
 
-  // Yesterday is complete. Save progress into history.
-  const habitNames = settings.habits;
-  const completed = habitNames.filter((habit) => habitsState[habit]).length;
-  const total = habitNames.length;
+  const completed = settings.habits.filter((habit) => habitsState[habit]).length;
+  const total = settings.habits.length;
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
-  stats.history[lastDate] = {
-    completed,
-    total,
-    percent
-  };
-
+  stats.history[lastDate] = { completed, total, percent };
   stats.daysTracked += 1;
 
-  // Simple streak logic:
-  // if 70%+ completed, streak continues, otherwise it resets
   if (percent >= 70) {
     stats.currentStreak += 1;
     stats.bestStreak = Math.max(stats.bestStreak, stats.currentStreak);
@@ -221,7 +174,6 @@ function runDailyResetIfNeeded() {
 
   saveToStorage(STORAGE_KEYS.stats, stats);
 
-  // Reset today's state
   habitsState = createHabitsState(settings.habits);
   reflectionText = "";
   focusText = "";
@@ -232,10 +184,6 @@ function runDailyResetIfNeeded() {
 
   localStorage.setItem(STORAGE_KEYS.lastDate, today);
 }
-
-// ================================================
-// RENDER FUNCTIONS
-// ================================================
 
 function renderHeader() {
   dashboardTitle.textContent = settings.title || DEFAULT_TITLE;
@@ -284,11 +232,9 @@ function renderProgress() {
 
   dailyPercent.textContent = `${percent}%`;
   completedPill.textContent = `${completed} completed`;
-
   completedCount.textContent = `${completed} completed`;
   remainingCount.textContent = `${remaining} remaining`;
   totalCount.textContent = `${total} total`;
-
   progressBarFill.style.width = `${percent}%`;
 
   if (percent === 0) {
@@ -324,12 +270,8 @@ function renderMotivation() {
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
   let bucket = "low";
-
-  if (percent >= 75) {
-    bucket = "high";
-  } else if (percent >= 35) {
-    bucket = "medium";
-  }
+  if (percent >= 75) bucket = "high";
+  else if (percent >= 35) bucket = "medium";
 
   motivationLine.textContent = getRandomItem(MOTIVATION_LINES[bucket]);
 }
@@ -351,14 +293,73 @@ function renderAll() {
   renderSettingsForm();
 }
 
-// ================================================
-// MODAL CONTROLS
-// ================================================
-
 function openSettingsModal() {
   settingsModal.classList.remove("hidden");
   settingsModal.setAttribute("aria-hidden", "false");
 }
 
 function closeSettingsModal() {
-  settingsModal.classList
+  settingsModal.classList.add("hidden");
+  settingsModal.setAttribute("aria-hidden", "true");
+}
+
+function saveSettings() {
+  const newTitle = titleInput.value.trim() || DEFAULT_TITLE;
+  const newSubtitle = subtitleInput.value.trim() || DEFAULT_SUBTITLE;
+
+  const newHabits = habitsInput.value
+    .split("\n")
+    .map((habit) => habit.trim())
+    .filter((habit) => habit.length > 0);
+
+  settings = {
+    title: newTitle,
+    subtitle: newSubtitle,
+    habits: newHabits.length > 0 ? newHabits : [...DEFAULT_HABITS]
+  };
+
+  saveToStorage(STORAGE_KEYS.settings, settings);
+
+  const nextHabitState = {};
+  settings.habits.forEach((habit) => {
+    nextHabitState[habit] = habitsState[habit] || false;
+  });
+  habitsState = nextHabitState;
+
+  saveToStorage(STORAGE_KEYS.habitsState, habitsState);
+
+  renderAll();
+  closeSettingsModal();
+}
+
+function resetSettings() {
+  settings = getDefaultSettings();
+  habitsState = createHabitsState(settings.habits);
+
+  saveToStorage(STORAGE_KEYS.settings, settings);
+  saveToStorage(STORAGE_KEYS.habitsState, habitsState);
+
+  renderAll();
+  closeSettingsModal();
+}
+
+reflectionInput.addEventListener("input", () => {
+  reflectionText = reflectionInput.value;
+  saveToStorage(STORAGE_KEYS.reflection, reflectionText);
+  reflectionStatus.textContent = "Saved locally on this device.";
+});
+
+focusInput.addEventListener("input", () => {
+  focusText = focusInput.value;
+  saveToStorage(STORAGE_KEYS.focus, focusText);
+});
+
+openSettingsButton.addEventListener("click", openSettingsModal);
+closeSettingsButton.addEventListener("click", closeSettingsModal);
+modalBackdrop.addEventListener("click", closeSettingsModal);
+
+saveSettingsButton.addEventListener("click", saveSettings);
+resetSettingsButton.addEventListener("click", resetSettings);
+
+runDailyResetIfNeeded();
+renderAll();
